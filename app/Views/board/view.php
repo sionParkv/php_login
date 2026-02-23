@@ -1,0 +1,67 @@
+<?php $title = '상세보기'; include __DIR__.'/_layout_top.php'; ?>
+
+    <div class="topbar">
+        <div class="title">상세보기</div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-sm btn-outline-secondary" href="/board">목록</a>
+            <a class="btn btn-sm btn-outline-secondary" href="/logout">로그아웃</a>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <h5 style="color:#192A3E; font-weight:800;"><?= esc($post['title']) ?></h5>
+
+        <div class="meta-row mt-2">
+            <div><b>글쓴이</b> <?= esc($post['name']) ?></div>
+            <div><b>작성시간</b> <?= esc($post['created_at']) ?></div>
+            <div><b>조회수</b> <?= esc($post['views']) ?></div>
+            <div><b>좋아요</b> <?= esc($likeCount) ?></div>
+        </div>
+
+        <hr>
+
+        <div style="white-space:pre-wrap; color:#192A3E;">
+            <?= esc($post['content']) ?>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <a class="btn btn-sm btn-pink" href="/like/toggle/<?= esc($post['id']) ?>">
+                <?= $liked ? '좋아요 취소' : '좋아요' ?> (<?= esc($likeCount) ?>)
+            </a>
+
+            <div class="d-flex gap-2">
+                <?php if ((int)$post['user_id'] === (int)session()->get('user_id')): ?>
+                    <a class="btn btn-sm btn-outline-secondary" href="/board/edit/<?= esc($post['id']) ?>">수정</a>
+                    <a class="btn btn-sm btn-outline-danger" href="/board/delete/<?= esc($post['id']) ?>" onclick="return confirm('삭제할까요?');">삭제</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <hr class="mt-4">
+
+    <div class="mt-3">
+        <h6 style="color:#192A3E; font-weight:800;">댓글</h6>
+
+        <div class="mt-3">
+            <?php foreach ($comments as $c): ?>
+                <div class="py-2" style="border-bottom:1px solid #eee;">
+                    <div class="d-flex justify-content-between">
+                        <div style="font-weight:700; color:#192A3E;"><?= esc($c['name']) ?></div>
+                        <div class="muted" style="font-size:12px;"><?= esc($c['created_at'] ?? '') ?></div>
+                    </div>
+                    <div style="white-space:pre-wrap; color:#192A3E; margin-top:4px;"><?= esc($c['content']) ?></div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <form method="post" action="/comment/write" class="mt-3">
+            <input type="hidden" name="post_id" value="<?= esc($post['id']) ?>">
+            <textarea name="content" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
+            <div class="d-flex justify-content-end mt-2">
+                <button class="btn btn-pink btn-sm">댓글 등록</button>
+            </div>
+        </form>
+    </div>
+
+<?php include __DIR__.'/_layout_bottom.php'; ?>
