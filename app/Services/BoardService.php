@@ -68,13 +68,57 @@ class BoardService
         return $this->model->delete($postId);
     }
 
-    public function writeComment(int $postId, int $userId, string $content)
+    public function getEditData(int $postId, int $userId): array
     {
-        return $this->model->insertComment($postId, $userId, $content);
+        $post = $this->model->find($postId);
+
+        if (!$post) {
+            return ['ok' => false, 'message' => '게시글이 없습니다.'];
+        }
+
+        if ((int)$post['user_id'] !== (int)$userId) {
+            return ['ok' => false, 'message' => '권한 없음'];
+        }
+
+        return ['ok' => true, 'post' => $post];
     }
 
-    public function toggleLike(int $postId, int $userId)
+    public function toggleLike(int $postId, int $userId): array
     {
-        return $this->model->toggleLike($postId, $userId);
+        $liked = $this->model->toggleLike($postId, $userId);
+        $likeCount = $this->model->getLikeCount($postId);
+
+        return [
+            'status' => 'success',
+            'liked' => $liked,
+            'likeCount' => $likeCount
+        ];
+    }
+
+    public function writeComment(int $postId, int $userId, string $userName, string $content): array
+    {
+        $content = trim($content);
+
+        if ($content === '') {
+            return ['status' => 'error', 'message' => '댓글을 입력하세요'];
+        }
+
+        $this->model->insertComment($postId, $userId, $content);
+
+        // append용 HTML 생성(서비스에서 처리)
+        $html = '
+      <div class="py-2" style="border-bottom:1px solid #eee;">
+        <div class="d-flex justify-content-between">
+          <div style="font-weight:700; color:#192A3E;">'.esc($userName).'</div>
+          <div class="muted" style="font-size:12px;">방금</div>
+        </div>
+        <div style="white-space:pre-wrap; color:#192A3E; margin-top:4px;">'.esc($content).'</div>
+      </div>
+    ';
+
+        return [
+            'status' => 'success',
+            'html' => $html
+        ];
     }
 }

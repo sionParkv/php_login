@@ -25,9 +25,11 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center mt-4">
-            <a class="btn btn-sm btn-pink" href="/like/toggle/<?= esc($post['id']) ?>">
-                <?= $liked ? '좋아요 취소' : '좋아요' ?> (<?= esc($likeCount) ?>)
-            </a>
+            <button type="button"
+                    class="btn btn-sm btn-pink like-btn text-white"
+                    data-post-id="<?= esc($post['id']) ?>">
+                <?= $liked ? '좋아요 취소' : '좋아요' ?> (<span class="like-count"><?= esc($likeCount) ?></span>)
+            </button>
 
             <div class="d-flex gap-2">
                 <?php if ((int)$post['user_id'] === (int)session()->get('user_id')): ?>
@@ -43,7 +45,7 @@
     <div class="mt-3">
         <h6 style="color:#192A3E; font-weight:800;">댓글</h6>
 
-        <div class="mt-3">
+        <div id="commentList" class="mt-3">
             <?php foreach ($comments as $c): ?>
                 <div class="py-2" style="border-bottom:1px solid #eee;">
                     <div class="d-flex justify-content-between">
@@ -55,7 +57,7 @@
             <?php endforeach; ?>
         </div>
 
-        <form method="post" action="/comment/write" class="mt-3">
+        <form id="commentForm" method="post" action="/comment/write" class="mt-3">
             <input type="hidden" name="post_id" value="<?= esc($post['id']) ?>">
             <textarea name="content" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
             <div class="d-flex justify-content-end mt-2">
@@ -63,5 +65,8 @@
             </div>
         </form>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/assets/js/board.js"></script>
 
 <?php include __DIR__.'/_layout_bottom.php'; ?>

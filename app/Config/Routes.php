@@ -59,9 +59,7 @@ $routes->post('/board/edit/(:num)', 'BoardController::editPost/$1');
 // 게시글 삭제 (본인 글만 가능)
 $routes->get('/board/delete/(:num)', 'BoardController::delete/$1');
 
-// 댓글 등록 (DB insert)
+// ===== AJAX(JSON) 전용 추가 =====
+$routes->post('/like/toggle', 'BoardController::toggleLike');
 $routes->post('/comment/write', 'BoardController::commentWrite');
-
-// 좋아요 토글 (있으면 삭제, 없으면 추가)
-$routes->get('/like/toggle/(:num)', 'BoardController::toggleLike/$1');
 

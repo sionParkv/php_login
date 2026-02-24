@@ -62,6 +62,19 @@ class BoardController extends Controller
         return redirect()->to('/board');
     }
 
+    public function edit($id)
+    {
+        if ($r = $this->requireLogin()) return $r;
+
+        $res = $this->service->getEditData((int)$id, (int)session()->get('user_id'));
+
+        if (!$res['ok']) {
+            return $res['message'];
+        }
+
+        return view('board/edit', ['post' => $res['post']]);
+    }
+
     public function editPost($id)
     {
         if ($r = $this->requireLogin()) return $r;
@@ -84,24 +97,31 @@ class BoardController extends Controller
         return redirect()->to('/board');
     }
 
+    public function toggleLike()
+    {
+        if ($r = $this->requireLogin()) return $r;
+
+        $postId = (int)$this->request->getPost('post_id');
+        $userId = (int)session()->get('user_id');
+
+        // ✅ 컨트롤러는 서비스 호출만
+        $res = $this->service->toggleLike($postId, $userId);
+
+        return $this->response->setJSON($res);
+    }
+
     public function commentWrite()
     {
         if ($r = $this->requireLogin()) return $r;
 
-        $this->service->writeComment(
-            (int)$this->request->getPost('post_id'),
-            session()->get('user_id'),
-            $this->request->getPost('content')
-        );
+        $postId = (int)$this->request->getPost('post_id');
+        $userId = (int)session()->get('user_id');
+        $userName = (string)session()->get('user_name');
+        $content = (string)$this->request->getPost('content');
 
-        return redirect()->back();
-    }
+        // ✅ 컨트롤러는 서비스 호출만
+        $res = $this->service->writeComment($postId, $userId, $userName, $content);
 
-    public function toggleLike($postId)
-    {
-        if ($r = $this->requireLogin()) return $r;
-
-        $this->service->toggleLike($postId, session()->get('user_id'));
-        return redirect()->back();
+        return $this->response->setJSON($res);
     }
 }
