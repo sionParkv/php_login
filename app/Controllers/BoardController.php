@@ -124,4 +124,19 @@ class BoardController extends Controller
 
         return $this->response->setJSON($res);
     }
+
+    public function commentDelete()
+    {
+        // AJAX 요청이므로 redirect 말고 JSON이 안전함
+        if (!session()->get('logged_in')) {
+            return $this->response->setJSON(['status' => 'error', 'message' => '로그인 필요']);
+        }
+
+        $commentId = (int)$this->request->getPost('comment_id');
+        $userId = (int)session()->get('user_id');
+
+        $res = $this->service->deleteComment($commentId, $userId);
+
+        return $this->response->setJSON($res);
+    }
 }

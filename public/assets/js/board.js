@@ -1,7 +1,7 @@
 $(document).ready(function () {
-
     // 좋아요 토글
     $(document).on("click", ".like-btn", function () {
+
         const btn = $(this);
         const postId = btn.data("post-id");
 
@@ -11,19 +11,21 @@ $(document).ready(function () {
             data: { post_id: postId },
             dataType: "json",
             success: function (res) {
+
                 if (res.status !== "success") {
                     alert(res.message || "처리 실패");
                     return;
                 }
 
+                // 좋아요 숫자 변경
                 btn.find(".like-count").text(res.likeCount);
 
-                // 버튼 텍스트 변경
-                btn.contents().filter(function(){ return this.nodeType === 3; }).first()
-                    .replaceWith(res.liked ? "좋아요 취소 (" : "좋아요 (");
-
-                if (res.liked) btn.addClass("text-danger");
-                else btn.removeClass("text-danger");
+                // 클래스 변경
+                if (res.liked) {
+                    btn.removeClass("btn-unliked").addClass("btn-liked");
+                } else {
+                    btn.removeClass("btn-liked").addClass("btn-unliked");
+                }
             },
             error: function () {
                 alert("서버 오류");
@@ -61,4 +63,27 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on("click", ".comment-delete-btn", function () {
+        const commentId = $(this).data("comment-id");
+
+        if (!confirm("댓글을 삭제할까요?")) return;
+
+        $.ajax({
+            url: "/comment/delete",
+            method: "POST",
+            data: { comment_id: commentId },
+            dataType: "json",
+            success: function (res) {
+                if (res.status !== "success") {
+                    alert(res.message || "삭제 실패");
+                    return;
+                }
+
+                $("#comment-" + res.commentId).remove();
+            },
+            error: function () {
+                alert("서버 오류");
+            }
+        });
+    });
 });

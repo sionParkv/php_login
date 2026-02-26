@@ -41,6 +41,42 @@ class BoardModel extends Model
             ->update();
     }
 
+    public function getPostWithAuthor(int $postId): ?array
+    {
+        return $this->select('dev_posts.*, dev_users.name')
+            ->join('dev_users', 'dev_users.id = dev_posts.user_id')
+            ->where('dev_posts.id', $postId)
+            ->first();
+    }
+
+    public function createPost(int $userId, string $title, string $content): int
+    {
+        $this->insert([
+            'user_id' => $userId,
+            'title' => $title,
+            'content' => $content
+        ]);
+
+        return (int)$this->getInsertID();
+    }
+
+    public function updatePost(int $postId, int $userId, string $title, string $content): bool
+    {
+        // 본인 글만 업데이트
+        return (bool)$this->where('id', $postId)
+            ->where('user_id', $userId)
+            ->set(['title' => $title, 'content' => $content])
+            ->update();
+    }
+
+    public function deletePost(int $postId, int $userId): bool
+    {
+        // 본인 글만 삭제
+        return (bool)$this->where('id', $postId)
+            ->where('user_id', $userId)
+            ->delete();
+    }
+
     /* =========================
        COMMENT 관련
     ========================== */
@@ -105,5 +141,14 @@ class BoardModel extends Model
             ->where('user_id', $userId)
             ->get()
             ->getRow();
+    }
+
+    public function deleteComment(int $commentId, int $userId): bool
+    {
+        // 본인 댓글만 삭제
+        return (bool) $this->db->table('dev_comments')
+            ->where('id', $commentId)
+            ->where('user_id', $userId)
+            ->delete();
     }
 }

@@ -63,3 +63,5 @@ $routes->get('/board/delete/(:num)', 'BoardController::delete/$1');
 $routes->post('/like/toggle', 'BoardController::toggleLike');
 $routes->post('/comment/write', 'BoardController::commentWrite');
 
+// 댓글 삭제 (AJAX)
+$routes->post('/comment/delete', 'BoardController::commentDelete');

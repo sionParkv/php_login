@@ -22,6 +22,24 @@
             box-shadow:0 10px 30px rgba(0,0,0,0.15);
         }
 
+        .like-btn {
+            border: 1px solid #ced4da;
+            background: #fff;
+            color: #6c757d;
+            transition: all 0.2s ease;
+        }
+
+        .like-btn.btn-liked {
+            border-color: #FF10B4;
+            color: #FF10B4;
+            background: #fff;
+        }
+
+        .like-btn:hover {
+            border-color: #FF10B4;
+            color: #FF10B4;
+        }
+
         .topbar{ display:flex; justify-content:space-between; align-items:center; padding:6px 2px 14px; border-bottom:1px solid #e9ecef; }
         .title{ font-weight:800; color:#192A3E; }
         .title small{ font-weight:600; color:#6c757d; margin-left:8px; }

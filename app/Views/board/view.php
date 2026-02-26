@@ -11,7 +11,7 @@
     <div class="mt-3">
         <h5 style="color:#192A3E; font-weight:800;"><?= esc($post['title']) ?></h5>
 
-        <div class="meta-row mt-2">
+        <div class="meta-row mt-2 d-flex gap-2">
             <div><b>글쓴이</b> <?= esc($post['name']) ?></div>
             <div><b>작성시간</b> <?= esc($post['created_at']) ?></div>
             <div><b>조회수</b> <?= esc($post['views']) ?></div>
@@ -20,23 +20,23 @@
 
         <hr>
 
-        <div style="white-space:pre-wrap; color:#192A3E;">
+        <div style="white-space:pre-wrap; color:#192A3E; min-height: 100px">
             <?= esc($post['content']) ?>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="d-flex justify-content-center align-items-center mt-4">
             <button type="button"
-                    class="btn btn-sm btn-pink like-btn text-white"
+                    class="btn btn-sm like-btn <?= $liked ? 'btn-liked' : 'btn-unliked' ?>"
                     data-post-id="<?= esc($post['id']) ?>">
-                <?= $liked ? '좋아요 취소' : '좋아요' ?> (<span class="like-count"><?= esc($likeCount) ?></span>)
+                좋아요 (<span class="like-count"><?= esc($likeCount) ?></span>)
             </button>
+        </div>
 
-            <div class="d-flex gap-2">
-                <?php if ((int)$post['user_id'] === (int)session()->get('user_id')): ?>
-                    <a class="btn btn-sm btn-outline-secondary" href="/board/edit/<?= esc($post['id']) ?>">수정</a>
-                    <a class="btn btn-sm btn-outline-danger" href="/board/delete/<?= esc($post['id']) ?>" onclick="return confirm('삭제할까요?');">삭제</a>
-                <?php endif; ?>
-            </div>
+        <div class="d-flex justify-content-end gap-2">
+            <?php if ((int)$post['user_id'] === (int)session()->get('user_id')): ?>
+                <a class="btn btn-sm btn-outline-secondary" href="/board/edit/<?= esc($post['id']) ?>">수정</a>
+                <a class="btn btn-sm btn-outline-danger" href="/board/delete/<?= esc($post['id']) ?>" onclick="return confirm('삭제할까요?');">삭제</a>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -47,17 +47,31 @@
 
         <div id="commentList" class="mt-3">
             <?php foreach ($comments as $c): ?>
-                <div class="py-2" style="border-bottom:1px solid #eee;">
-                    <div class="d-flex justify-content-between">
+                <div id="comment-<?= esc($c['id']) ?>" class="py-2" style="border-bottom:1px solid #eee;">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div style="font-weight:700; color:#192A3E;"><?= esc($c['name']) ?></div>
-                        <div class="muted" style="font-size:12px;"><?= esc($c['created_at'] ?? '') ?></div>
+
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="muted" style="font-size:12px;"><?= esc($c['created_at'] ?? '') ?></div>
+
+                            <?php if ((int)$c['user_id'] === (int)session()->get('user_id')): ?>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-danger comment-delete-btn"
+                                        data-comment-id="<?= esc($c['id']) ?>">
+                                    삭제
+                                </button>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <div style="white-space:pre-wrap; color:#192A3E; margin-top:4px;"><?= esc($c['content']) ?></div>
+
+                    <div style="color:#192A3E; margin-top:4px;">
+                        <?= esc($c['content']) ?>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <form id="commentForm" method="post" action="/comment/write" class="mt-3">
+        <form id="commentForm" class="mt-3">
             <input type="hidden" name="post_id" value="<?= esc($post['id']) ?>">
             <textarea name="content" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
             <div class="d-flex justify-content-end mt-2">

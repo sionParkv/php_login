@@ -24,48 +24,37 @@ class BoardService
     {
         $this->model->increaseViews($postId);
 
-        $post = $this->model
-            ->select('dev_posts.*, dev_users.name')
-            ->join('dev_users', 'dev_users.id = dev_posts.user_id')
-            ->where('dev_posts.id', $postId)
-            ->first();
-
+        // ✅ DB 조회는 모델로
+        $post = $this->model->getPostWithAuthor($postId);
         if (!$post) return null;
 
         return [
             'post' => $post,
             'comments' => $this->model->getComments($postId),
             'likeCount' => $this->model->getLikeCount($postId),
-            'liked' => $this->model->hasUserLiked($postId, $userId)
+            'liked' => $this->model->hasUserLiked($postId, $userId),
         ];
     }
 
     public function create(int $userId, string $title, string $content)
     {
-        return $this->model->insert([
-            'user_id' => $userId,
-            'title' => $title,
-            'content' => $content
-        ]);
+        $title = trim($title);
+        if ($title === '') return false;
+
+        return $this->model->createPost($userId, $title, (string)$content);
     }
 
     public function update(int $postId, int $userId, string $title, string $content)
     {
-        $post = $this->model->find($postId);
-        if (!$post || $post['user_id'] != $userId) return false;
+        $title = trim($title);
+        if ($title === '') return false;
 
-        return $this->model->update($postId, [
-            'title' => $title,
-            'content' => $content
-        ]);
+        return $this->model->updatePost($postId, $userId, $title, (string)$content);
     }
 
     public function delete(int $postId, int $userId)
     {
-        $post = $this->model->find($postId);
-        if (!$post || $post['user_id'] != $userId) return false;
-
-        return $this->model->delete($postId);
+        return $this->model->deletePost($postId, $userId);
     }
 
     public function getEditData(int $postId, int $userId): array
@@ -120,5 +109,20 @@ class BoardService
             'status' => 'success',
             'html' => $html
         ];
+    }
+
+    public function deleteComment(int $commentId, int $userId): array
+    {
+        if ($commentId <= 0) {
+            return ['status' => 'error', 'message' => '잘못된 요청'];
+        }
+
+        $ok = $this->model->deleteComment($commentId, $userId);
+
+        if (!$ok) {
+            return ['status' => 'error', 'message' => '삭제 권한이 없거나 댓글이 없습니다'];
+        }
+
+        return ['status' => 'success', 'commentId' => $commentId];
     }
 }
