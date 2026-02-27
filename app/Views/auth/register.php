@@ -97,7 +97,7 @@
                 return;
             }
 
-            $.post('/register', {
+            $.post('/auth/register', {
                 email: email,
                 name: name,
                 password: pw
@@ -111,7 +111,7 @@
                 alert("회원가입 완료");
 
                 // 로그인 화면 이동
-                window.location.href = '/login';
+                window.location.href = '/auth/login';
 
             }, 'json');
 

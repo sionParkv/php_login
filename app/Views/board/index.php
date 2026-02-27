@@ -12,7 +12,7 @@
                 <button class="btn btn-sm btn-outline-secondary ms-2 w-50" type="submit">검색</button>
             </form>
 
-            <a class="btn btn-sm btn-outline-secondary" href="/logout">로그아웃</a>
+            <a class="btn btn-sm btn-outline-secondary" href="/auth/logout">로그아웃</a>
         </div>
     </div>
 

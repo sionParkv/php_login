@@ -12,7 +12,7 @@
     <div class="alert alert-danger mt-3"><?= esc(session()->getFlashdata('error')) ?></div>
 <?php endif; ?>
 
-    <form method="post" action="/board/edit/<?= esc($post['id']) ?>" class="mt-3">
+    <form method="post" action="/board/edit_post/<?= esc($post['id']) ?>" class="mt-3">
         <div class="mb-3">
             <label class="form-label">제목</label>
             <input name="title" class="form-control" value="<?= esc($post['title']) ?>">

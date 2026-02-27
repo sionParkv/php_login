@@ -60,7 +60,7 @@
     <hr class="my-4">
 
     <div class="text-center">
-        <a href="/login" class="btn btn-outline-secondary w-100">
+        <a href="/auth/login" class="btn btn-outline-secondary w-100">
             로그인 하기
         </a>
     </div>
@@ -79,7 +79,7 @@
 
             let name = $("#findName").val();
 
-            $.post('/find-email', { name: name }, function (res) {
+            $.post('/auth/find_email', { name: name }, function (res) {
 
                 if (res.status === 'error') {
                     alert(res.message);
@@ -96,7 +96,7 @@
 
             let email = $("#resetEmail").val();
 
-            $.post('/reset-password', { email: email, password: 'temp_check' }, function (res) {
+            $.post('/auth/reset_password', { email: email, password: 'temp_check' }, function (res) {
 
                 if (res.status === 'error') {
                     alert(res.message);
@@ -125,7 +125,7 @@
                 return;
             }
 
-            $.post('/reset-password', {
+            $.post('/auth/reset_password', {
                 email: email,
                 password: pw
             }, function () {

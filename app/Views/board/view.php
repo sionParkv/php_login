@@ -4,7 +4,7 @@
         <div class="title">상세보기</div>
         <div class="d-flex gap-2">
             <a class="btn btn-sm btn-outline-secondary" href="/board">목록</a>
-            <a class="btn btn-sm btn-outline-secondary" href="/logout">로그아웃</a>
+            <a class="btn btn-sm btn-outline-secondary" href="/auth/logout">로그아웃</a>
         </div>
     </div>
 

@@ -49,7 +49,7 @@ class BoardController extends Controller
         return view('board/write');
     }
 
-    public function writePost()
+    public function write_post()
     {
         if ($r = $this->requireLogin()) return $r;
 
@@ -75,7 +75,7 @@ class BoardController extends Controller
         return view('board/edit', ['post' => $res['post']]);
     }
 
-    public function editPost($id)
+    public function edit_post($id)
     {
         if ($r = $this->requireLogin()) return $r;
 
@@ -97,7 +97,7 @@ class BoardController extends Controller
         return redirect()->to('/board');
     }
 
-    public function toggleLike()
+    public function toggle_like()
     {
         if ($r = $this->requireLogin()) return $r;
 
@@ -110,7 +110,7 @@ class BoardController extends Controller
         return $this->response->setJSON($res);
     }
 
-    public function commentWrite()
+    public function comment_write()
     {
         if ($r = $this->requireLogin()) return $r;
 
@@ -125,7 +125,7 @@ class BoardController extends Controller
         return $this->response->setJSON($res);
     }
 
-    public function commentDelete()
+    public function comment_delete()
     {
         // AJAX 요청이므로 redirect 말고 JSON이 안전함
         if (!session()->get('logged_in')) {

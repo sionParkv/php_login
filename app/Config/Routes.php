@@ -10,58 +10,18 @@ $routes->get('/', 'Home::index');
 
 /*
 |--------------------------------------------------------------------------
-| AuthController
+| AuthController - dynamic
 |--------------------------------------------------------------------------
 */
-
-// 로그인
-$routes->get('/login', 'AuthController::login');          // 로그인 화면
-$routes->post('/login', 'AuthController::loginPost');     // 로그인 처리
-
-// 회원가입
-$routes->get('/register', 'AuthController::register');        // 회원가입 화면
-$routes->post('/register', 'AuthController::registerPost');   // 회원가입 처리
-
-// 아이디 / 비밀번호 찾기
-$routes->get('/find', 'AuthController::find');
-
-$routes->post('/find-email', 'AuthController::findEmail');
-$routes->post('/reset-password', 'AuthController::resetPassword');
-
-// 로그아웃
-$routes->get('/logout', 'AuthController::logout');
-
+$routes->match(['GET', 'POST'], 'auth/(:any)', 'AuthController::$1');
 /*
 |--------------------------------------------------------------------------
-| BoardController
+| BoardController - dynamic
 |--------------------------------------------------------------------------
 */
 
-// 게시판 목록 페이지 (검색 + 페이지네이션 포함)
+// /board -> index 유지
 $routes->get('/board', 'BoardController::index');
 
-// 특정 게시글 상세보기
-// (:num) → 게시글 ID
-$routes->get('/board/view/(:num)', 'BoardController::view/$1');
-
-// 글쓰기 화면
-$routes->get('/board/write', 'BoardController::write');
-
-// 글쓰기 처리 (DB insert)
-$routes->post('/board/write', 'BoardController::writePost');
-
-// 수정 화면 (본인 글만 접근 가능)
-$routes->get('/board/edit/(:num)', 'BoardController::edit/$1');
-
-// 수정 처리 (DB update)
-$routes->post('/board/edit/(:num)', 'BoardController::editPost/$1');
-
-// 게시글 삭제 (본인 글만 가능)
-$routes->get('/board/delete/(:num)', 'BoardController::delete/$1');
-
-// ===== AJAX(JSON) 전용 추가 =====
-$routes->post('/like/toggle', 'BoardController::toggleLike');
-$routes->post('/comment/write', 'BoardController::commentWrite');
-
-// 댓글 삭제 (AJAX)
-$routes->post('/comment/delete', 'BoardController::commentDelete');
+// /board/{method}/...
+$routes->match(['GET', 'POST'], 'board/(:any)', 'BoardController::$1');

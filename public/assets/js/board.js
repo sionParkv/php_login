@@ -6,7 +6,7 @@ $(document).ready(function () {
         const postId = btn.data("post-id");
 
         $.ajax({
-            url: "/like/toggle",
+            url: "/board/toggle_like",
             method: "POST",
             data: { post_id: postId },
             dataType: "json",
@@ -44,7 +44,7 @@ $(document).ready(function () {
         if (!content.trim()) return;
 
         $.ajax({
-            url: "/comment/write",
+            url: "/board/comment_write",
             method: "POST",
             data: { post_id: postId, content: content },
             dataType: "json",
@@ -69,7 +69,7 @@ $(document).ready(function () {
         if (!confirm("댓글을 삭제할까요?")) return;
 
         $.ajax({
-            url: "/comment/delete",
+            url: "/board/comment_delete",
             method: "POST",
             data: { comment_id: commentId },
             dataType: "json",

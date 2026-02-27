@@ -73,7 +73,7 @@
 
     <h3 class="auth-title">로그인</h3>
 
-    <form method="post" action="/login">
+    <form method="post" action="/auth/login_post">
 
         <div class="mb-3">
             <label class="form-label">이메일</label>
@@ -90,9 +90,9 @@
     </form>
 
     <div class="auth-links">
-        <a href="/register">회원가입</a> |
-        <a href="/find">아이디 찾기</a> |
-        <a href="/find">비밀번호 찾기</a>
+        <a href="/auth/register">회원가입</a> |
+        <a href="/auth/find">아이디 찾기</a> |
+        <a href="/auth/find">비밀번호 찾기</a>
     </div>
 
 </div>

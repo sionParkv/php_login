@@ -23,7 +23,7 @@ class AuthController extends Controller
     }
 
     // 회원가입 처리
-    public function registerPost()
+    public function register_post()
     {
         $res = $this->service->register(
             (string)$this->request->getPost('email'),
@@ -41,7 +41,7 @@ class AuthController extends Controller
     }
 
     // 로그인 처리
-    public function loginPost()
+    public function login_post()
     {
         $result = $this->service->login(
             (string)$this->request->getPost('email'),
@@ -49,7 +49,7 @@ class AuthController extends Controller
         );
 
         if (!$result['ok']) {
-            return redirect()->to('/login')->with('error', $result['message']);
+            return redirect()->to('auth/login')->with('error', $result['message']);
         }
 
         $user = $result['user'];
@@ -70,14 +70,14 @@ class AuthController extends Controller
     }
 
     // 아이디(이메일) 찾기
-    public function findEmail()
+    public function find_email()
     {
         $res = $this->service->findEmailByName((string)$this->request->getPost('name'));
         return $this->response->setJSON($res);
     }
 
     // 비밀번호 재설정
-    public function resetPassword()
+    public function reset_password()
     {
         $res = $this->service->resetPassword(
             (string)$this->request->getPost('email'),
@@ -91,6 +91,6 @@ class AuthController extends Controller
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/login');
+        return redirect()->to('auth/login');
     }
 }
