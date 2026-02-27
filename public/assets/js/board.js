@@ -1,9 +1,54 @@
-$(document).ready(function () {
-    // 좋아요 토글
-    $(document).on("click", ".like-btn", function () {
+var JsBoardView = function () {
+    this.commentTpl = null;
+};
 
-        const btn = $(this);
-        const postId = btn.data("post-id");
+JsBoardView.prototype = {
+    init: function () {
+        this.compileTemplates();
+        this.bindEvents();
+    },
+
+    compileTemplates: function () {
+        if (typeof _ === "undefined" || !_.template) {
+            console.error("underscore template is not loaded.");
+            return;
+        }
+
+        var tpl = $("script.comment-template").html();
+        this.commentTpl = _.template(tpl);
+    },
+
+    bindEvents: function () {
+        var _this = this;
+
+        // 좋아요
+        $(document).on("click", ".btn-like", function () {
+            _this.toggleLike($(this));
+        });
+
+        // 댓글 등록
+        $(document).on("submit", "#commentForm", function (e) {
+            e.preventDefault();
+            _this.submitComment($(this));
+        });
+
+        // 댓글 삭제
+        $(document).on("click", ".btn-comment-delete", function () {
+            _this.deleteComment($(this));
+        });
+    },
+
+    escapeHtml: function (str) {
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    },
+    // 변수명 디테일
+    toggleLike: function ($btn) {
+        var postId = $btn.data("post-id");
 
         $.ajax({
             url: "/board/toggle_like",
@@ -11,37 +56,29 @@ $(document).ready(function () {
             data: { post_id: postId },
             dataType: "json",
             success: function (res) {
-
                 if (res.status !== "success") {
                     alert(res.message || "처리 실패");
                     return;
                 }
 
-                // 좋아요 숫자 변경
-                btn.find(".like-count").text(res.likeCount);
+                $btn.find(".like-count").text(res.likeCount);
 
-                // 클래스 변경
                 if (res.liked) {
-                    btn.removeClass("btn-unliked").addClass("btn-liked");
+                    $btn.removeClass("btn-unliked").addClass("btn-liked");
                 } else {
-                    btn.removeClass("btn-liked").addClass("btn-unliked");
+                    $btn.removeClass("btn-liked").addClass("btn-unliked");
                 }
-            },
-            error: function () {
-                alert("서버 오류");
             }
         });
-    });
+    },
 
-    // 댓글 작성 AJAX
-    $(document).on("submit", "#commentForm", function (e) {
-        e.preventDefault();
+    submitComment: function ($form) {
+        var _this = this;
 
-        const form = $(this);
-        const postId = form.find("input[name='post_id']").val();
-        const content = form.find("textarea[name='content']").val();
+        var postId = $form.find("input[name='post_id']").val();
+        var content = $form.find("textarea[name='content']").val();
 
-        if (!content.trim()) return;
+        if (!content || !content.trim()) return;
 
         $.ajax({
             url: "/board/comment_write",
@@ -54,17 +91,25 @@ $(document).ready(function () {
                     return;
                 }
 
-                $("#commentList").append(res.html);
-                form.find("textarea").val("");
-            },
-            error: function () {
-                alert("서버 오류");
+                var c = res.comment;
+
+                // 템플릿에 넣기 전 escape
+                var safe = {
+                    id: c.id,
+                    name: _this.escapeHtml(c.name),
+                    content: _this.escapeHtml(c.content),
+                    created_at: _this.escapeHtml(c.created_at || ""),
+                    canDelete: !!c.canDelete
+                };
+
+                $("#commentList").append(_this.commentTpl(safe));
+                $form.find("textarea").val("");
             }
         });
-    });
-
-    $(document).on("click", ".comment-delete-btn", function () {
-        const commentId = $(this).data("comment-id");
+    },
+    // 내부 함수는 _붙히기
+    deleteComment: function ($btn) {
+        var commentId = $btn.data("comment-id");
 
         if (!confirm("댓글을 삭제할까요?")) return;
 
@@ -80,10 +125,12 @@ $(document).ready(function () {
                 }
 
                 $("#comment-" + res.commentId).remove();
-            },
-            error: function () {
-                alert("서버 오류");
             }
         });
-    });
+    }
+};
+
+$(function () {
+    var boardView = new JsBoardView();
+    boardView.init();
 });

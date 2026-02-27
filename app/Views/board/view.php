@@ -20,13 +20,13 @@
 
         <hr>
 
-        <div style="white-space:pre-wrap; color:#192A3E; min-height: 100px">
+        <div class="post-content-scroll" style="min-height: 100px">
             <?= esc($post['content']) ?>
         </div>
 
         <div class="d-flex justify-content-center align-items-center mt-4">
             <button type="button"
-                    class="btn btn-sm like-btn <?= $liked ? 'btn-liked' : 'btn-unliked' ?>"
+                    class="btn btn-sm btn-like <?= $liked ? 'btn-liked' : 'btn-unliked' ?>"
                     data-post-id="<?= esc($post['id']) ?>">
                 좋아요 (<span class="like-count"><?= esc($likeCount) ?></span>)
             </button>
@@ -45,7 +45,7 @@
     <div class="mt-3">
         <h6 style="color:#192A3E; font-weight:800;">댓글</h6>
 
-        <div id="commentList" class="mt-3">
+        <div id="commentList" class="mt-3 comment-list-scroll">
             <?php foreach ($comments as $c): ?>
                 <div id="comment-<?= esc($c['id']) ?>" class="py-2" style="border-bottom:1px solid #eee;">
                     <div class="d-flex justify-content-between align-items-center">
@@ -56,7 +56,7 @@
 
                             <?php if ((int)$c['user_id'] === (int)session()->get('user_id')): ?>
                                 <button type="button"
-                                        class="btn btn-sm btn-outline-danger comment-delete-btn"
+                                        class="btn btn-sm btn-outline-danger btn-comment-delete"
                                         data-comment-id="<?= esc($c['id']) ?>">
                                     삭제
                                 </button>
@@ -80,7 +80,30 @@
         </form>
     </div>
 
+    <script type="text/template" class="comment-template">
+        <div id="comment-<%=id%>" class="py-2" style="border-bottom:1px solid #eee;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div style="font-weight:700; color:#192A3E;"><%=name%></div>
+
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="muted" style="font-size:12px;"><%=created_at || ''%></div>
+
+                    <% if (canDelete) { %>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger btn-comment-delete"
+                            data-comment-id="<%=id%>">
+                        삭제
+                    </button>
+                    <% } %>
+                </div>
+            </div>
+
+            <div style="white-space:pre-wrap; color:#192A3E; margin-top:4px;"><%=content%></div>
+        </div>
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
     <script src="/assets/js/board.js"></script>
 
 <?php include __DIR__.'/_layout_bottom.php'; ?>

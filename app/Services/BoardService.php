@@ -5,34 +5,34 @@ use App\Models\BoardModel;
 
 class BoardService
 {
-    public function __construct(private BoardModel $model)
+    public function __construct(private BoardModel $boardModel)
     {
     }
 
     public function getList(?string $q, int $perPage = 10)
     {
-        $builder = $this->model->getPostsWithLikeCount($q);
+        $builder = $this->boardModel->getPostsWithLikeCount($q);
 
         return [
             'posts' => $builder->paginate($perPage),
-            'pager' => $this->model->pager,
-            'totalCount' => $this->model->countAll()
+            'pager' => $this->boardModel->pager,
+            'totalCount' => $this->boardModel->countAll()
         ];
     }
 
     public function getDetail(int $postId, int $userId)
     {
-        $this->model->increaseViews($postId);
+        $this->boardModel->increaseViews($postId);
 
         // ✅ DB 조회는 모델로
-        $post = $this->model->getPostWithAuthor($postId);
+        $post = $this->boardModel->getPostWithAuthor($postId);
         if (!$post) return null;
 
         return [
             'post' => $post,
-            'comments' => $this->model->getComments($postId),
-            'likeCount' => $this->model->getLikeCount($postId),
-            'liked' => $this->model->hasUserLiked($postId, $userId),
+            'comments' => $this->boardModel->getComments($postId),
+            'likeCount' => $this->boardModel->getLikeCount($postId),
+            'liked' => $this->boardModel->hasUserLiked($postId, $userId),
         ];
     }
 
@@ -41,7 +41,7 @@ class BoardService
         $title = trim($title);
         if ($title === '') return false;
 
-        return $this->model->createPost($userId, $title, (string)$content);
+        return $this->boardModel->createPost($userId, $title, (string)$content);
     }
 
     public function update(int $postId, int $userId, string $title, string $content)
@@ -49,17 +49,17 @@ class BoardService
         $title = trim($title);
         if ($title === '') return false;
 
-        return $this->model->updatePost($postId, $userId, $title, (string)$content);
+        return $this->boardModel->updatePost($postId, $userId, $title, (string)$content);
     }
 
     public function delete(int $postId, int $userId)
     {
-        return $this->model->deletePost($postId, $userId);
+        return $this->boardModel->deletePost($postId, $userId);
     }
 
     public function getEditData(int $postId, int $userId): array
     {
-        $post = $this->model->find($postId);
+        $post = $this->boardModel->find($postId);
 
         if (!$post) {
             return ['ok' => false, 'message' => '게시글이 없습니다.'];
@@ -74,8 +74,8 @@ class BoardService
 
     public function toggleLike(int $postId, int $userId): array
     {
-        $liked = $this->model->toggleLike($postId, $userId);
-        $likeCount = $this->model->getLikeCount($postId);
+        $liked = $this->boardModel->toggleLike($postId, $userId);
+        $likeCount = $this->boardModel->getLikeCount($postId);
 
         return [
             'status' => 'success',
@@ -92,22 +92,24 @@ class BoardService
             return ['status' => 'error', 'message' => '댓글을 입력하세요'];
         }
 
-        $this->model->insertComment($postId, $userId, $content);
+        $ok = $this->boardModel->insertComment($postId, $userId, $content);
+        if (!$ok) {
+            return ['status' => 'error', 'message' => '댓글 등록 실패'];
+        }
 
-        // append용 HTML 생성(서비스에서 처리)
-        $html = '
-      <div class="py-2" style="border-bottom:1px solid #eee;">
-        <div class="d-flex justify-content-between">
-          <div style="font-weight:700; color:#192A3E;">'.esc($userName).'</div>
-          <div class="muted" style="font-size:12px;">방금</div>
-        </div>
-        <div style="white-space:pre-wrap; color:#192A3E; margin-top:4px;">'.esc($content).'</div>
-      </div>
-    ';
+        // insert id 얻기 (insertComment에서 insert 후 insertID를 리턴하게 바꾸는게 베스트)
+        $commentId = (int)$this->boardModel->db->insertID();
 
         return [
             'status' => 'success',
-            'html' => $html
+            'comment' => [
+                'id'        => $commentId,
+                'user_id'   => $userId,
+                'name'      => $userName,
+                'content'   => $content,
+                'created_at'=> '방금', // created_at 컬럼 있으면 실제값 내려주는게 더 좋음
+                'canDelete' => true,   // 이 요청은 본인이 쓴 거라 true
+            ],
         ];
     }
 
@@ -117,7 +119,7 @@ class BoardService
             return ['status' => 'error', 'message' => '잘못된 요청'];
         }
 
-        $ok = $this->model->deleteComment($commentId, $userId);
+        $ok = $this->boardModel->deleteComment($commentId, $userId);
 
         if (!$ok) {
             return ['status' => 'error', 'message' => '삭제 권한이 없거나 댓글이 없습니다'];

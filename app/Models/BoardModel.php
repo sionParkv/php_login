@@ -97,13 +97,15 @@ class BoardModel extends BaseModel
         );
     }
 
-    public function insertComment(int $postId, int $userId, string $content)
+    public function insertComment(int $postId, int $userId, string $content): int
     {
-        return $this->insertRow('dev_comments', [
+        $this->db->table('dev_comments')->insert([
             'post_id' => $postId,
             'user_id' => $userId,
             'content' => $content
         ]);
+
+        return (int)$this->db->insertID();
     }
 
     public function deleteComment(int $commentId, int $userId): bool

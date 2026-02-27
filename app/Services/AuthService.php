@@ -5,7 +5,7 @@ use App\Models\AuthModel;
 
 class AuthService
 {
-    public function __construct(private AuthModel $users)
+    public function __construct(private AuthModel $authModel)
     {
     }
 
@@ -23,7 +23,7 @@ class AuthService
 
         $hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        $result = $this->users->registerUser($email, $name, $hashed);
+        $result = $this->authModel->registerUser($email, $name, $hashed);
         if (!$result['ok']) {
             return ['status' => 'error', 'message' => $result['message']];
         }
@@ -37,7 +37,7 @@ class AuthService
             return ['ok' => false, 'message' => '값 누락'];
         }
 
-        $user = $this->users->findByEmail($email);
+        $user = $this->authModel->findByEmail($email);
         if (!$user) {
             return ['ok' => false, 'message' => '존재하지 않는 이메일'];
         }
@@ -55,7 +55,7 @@ class AuthService
             return ['status' => 'error', 'message' => '값 누락'];
         }
 
-        $user = $this->users->findByName($name);
+        $user = $this->authModel->findByName($name);
         if (!$user) {
             return ['status' => 'error', 'message' => '일치하는 사용자가 없습니다'];
         }
@@ -73,13 +73,13 @@ class AuthService
             return ['status' => 'error', 'message' => '비밀번호 규칙 불일치'];
         }
 
-        $user = $this->users->findByEmail($email);
+        $user = $this->authModel->findByEmail($email);
         if (!$user) {
             return ['status' => 'error', 'message' => '존재하지 않는 이메일'];
         }
 
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $ok = $this->users->updatePasswordByUserId((int)$user['id'], $hashed);
+        $ok = $this->authModel->updatePasswordByUserId((int)$user['id'], $hashed);
 
         return $ok ? ['status' => 'success'] : ['status' => 'error', 'message' => '비밀번호 변경 실패'];
     }

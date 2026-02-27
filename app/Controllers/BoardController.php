@@ -119,7 +119,6 @@ class BoardController extends Controller
         $userName = (string)session()->get('user_name');
         $content = (string)$this->request->getPost('content');
 
-        // ✅ 컨트롤러는 서비스 호출만
         $res = $this->service->writeComment($postId, $userId, $userName, $content);
 
         return $this->response->setJSON($res);

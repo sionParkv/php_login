@@ -6,17 +6,11 @@ use CodeIgniter\Database\BaseBuilder;
 
 class BaseModel extends Model
 {
-    /**
-     * Table builder shortcut
-     */
     protected function t(string $table): BaseBuilder
     {
         return $this->db->table($table);
     }
 
-    /**
-     * Where helper
-     */
     protected function applyWhere(BaseBuilder $b, array $where): BaseBuilder
     {
         foreach ($where as $k => $v) {
@@ -26,7 +20,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Select multiple rows (array)
+     * 데이터 다중 셀렉 (join 기반)
      */
     protected function selectAll(
         string $table,
@@ -53,7 +47,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Select single row (array|null)
+     * 데이터 1개 셀렉 (Join 기반)
      */
     protected function selectOne(
         string $table,
@@ -74,7 +68,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Insert row
+     * 데이터 1개 insert
      */
     protected function insertRow(string $table, array $data): bool
     {
@@ -82,7 +76,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Update rows by where
+     * where 기반 update
      */
     protected function updateWhere(string $table, array $where, array $set): bool
     {
@@ -92,7 +86,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Delete rows by where
+     * where 기반 delete
      */
     protected function deleteWhere(string $table, array $where): bool
     {
@@ -102,7 +96,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Count by where
+     * where 기반 count
      */
     protected function countWhere(string $table, array $where = []): int
     {
@@ -120,7 +114,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Increment numeric column (atomic)
+     * 카운트 증가 함수
      */
     protected function incrementWhere(string $table, array $where, string $field, int $step = 1): bool
     {

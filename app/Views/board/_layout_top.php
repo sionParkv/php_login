@@ -22,20 +22,38 @@
             box-shadow:0 10px 30px rgba(0,0,0,0.15);
         }
 
-        .like-btn {
+        .post-content-scroll {
+            max-height: 45vh;          /* 화면 높이 기준 */
+            overflow-y: auto;
+            overflow-x: hidden;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;   /* 긴 단어/URL도 줄바꿈 */
+            color: #192A3E;
+            padding-right: 6px;        /* 스크롤바 겹침 방지(선택) */
+        }
+
+        /* 댓글 리스트 스크롤 */
+        .comment-list-scroll {
+            max-height: 33vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 6px;
+        }
+
+        .btn-like {
             border: 1px solid #ced4da;
             background: #fff;
             color: #6c757d;
             transition: all 0.2s ease;
         }
 
-        .like-btn.btn-liked {
+        .btn-like.btn-liked {
             border-color: #FF10B4;
             color: #FF10B4;
             background: #fff;
         }
 
-        .like-btn:hover {
+        .btn-like:hover {
             border-color: #FF10B4;
             color: #FF10B4;
         }
