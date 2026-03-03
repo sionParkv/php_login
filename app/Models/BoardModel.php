@@ -11,7 +11,6 @@ class BoardModel extends BaseModel
        POST 관련
     ========================== */
 
-    // ✅ 이 함수는 그대로 유지
     public function getPostsWithLikeCount(?string $q = null)
     {
         $likeSub = "(SELECT post_id, COUNT(*) AS like_count FROM dev_likes GROUP BY post_id) likes";

@@ -4,7 +4,7 @@
         <div class="title">글 수정</div>
         <div class="d-flex gap-2">
             <a class="btn btn-sm btn-outline-secondary" href="/board/view/<?= esc($post['id']) ?>">상세</a>
-            <a class="btn btn-sm btn-outline-secondary" href="/board">목록</a>
+            <a class="btn btn-sm btn-outline-secondary" href="/board/index">목록</a>
         </div>
     </div>
 

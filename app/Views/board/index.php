@@ -7,7 +7,7 @@
         </div>
 
         <div class="d-flex gap-2 align-items-center">
-            <form method="get" action="/board" class="d-flex searchbox">
+            <form method="get" action="/board/index" class="d-flex searchbox">
                 <input name="q" value="<?= esc($q ?? '') ?>" class="form-control form-control-sm" placeholder="Search">
                 <button class="btn btn-sm btn-outline-secondary ms-2 w-50" type="submit">검색</button>
             </form>

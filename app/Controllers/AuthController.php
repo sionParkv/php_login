@@ -60,7 +60,7 @@ class AuthController extends Controller
             'logged_in' => true
         ]);
 
-        return redirect()->to('/board');
+        return redirect()->to('/board/index');
     }
 
     // 계정찾기 화면

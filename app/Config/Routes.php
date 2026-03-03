@@ -10,18 +10,15 @@ $routes->get('/', 'Home::index');
 
 /*
 |--------------------------------------------------------------------------
-| AuthController - dynamic
+| AuthController
 |--------------------------------------------------------------------------
 */
 $routes->match(['GET', 'POST'], 'auth/(:any)', 'AuthController::$1');
 /*
 |--------------------------------------------------------------------------
-| BoardController - dynamic
+| BoardController
 |--------------------------------------------------------------------------
 */
-
-// /board -> index 유지
-$routes->get('/board', 'BoardController::index');
 
 // /board/{method}/...
 $routes->match(['GET', 'POST'], 'board/(:any)', 'BoardController::$1');
